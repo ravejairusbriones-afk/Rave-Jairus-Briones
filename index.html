@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BRIONES Portfolio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* Force zero margins and lock overflow to prevent scrolling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; 
+            font-family: 'Inter', sans-serif;
+            background: #000;
+        }
+
+        .hero {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: url("your-photo.jpg") center center / cover no-repeat;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.15);
+            z-index: 1;
+        }
+
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 3;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 55px 70px;
+        }
+
+        .logo {
+            color: white;
+            font-size: 2.3rem;
+            letter-spacing: 10px;
+            font-weight: 300;
+            text-transform: uppercase;
+        }
+
+        .menu-container {
+            position: relative;
+        }
+
+        .menu {
+            width: 45px;
+            cursor: pointer;
+        }
+
+        .menu span {
+            display: block;
+            height: 2px;
+            background: white;
+            margin: 10px 0;
+        }
+
+        .dropdown {
+            display: none; 
+            position: absolute;
+            top: 40px; 
+            right: 0;
+            background: transparent;
+            text-align: right;
+            z-index: 10;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8) translateY(-10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .dropdown.active {
+            display: block;
+            animation: popIn 0.3s ease-out forwards;
+        }
+
+        .dropdown a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+        }
+
+        .content-wrapper {
+            position: absolute;
+            z-index: 2;
+            top: 60%; /* Adjusted from 50% to 60% to move content down and avoid overlap */
+            left: 80px;
+            transform: translateY(-50%);
+            color: white;
+        }
+
+        .content h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 9rem;
+            line-height: 0.9;
+            font-weight: 500;
+        }
+
+        .line {
+            width: 60px;
+            height: 2px;
+            background: white;
+            margin-top: 45px;
+        }
+
+        @media(max-width: 900px) {
+            header { padding: 30px; }
+            .logo { font-size: 1.5rem; }
+            .content-wrapper { left: 35px; }
+            .content h1 { font-size: 4.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="hero">
+        <header>
+            <div class="logo">BRIONES</div>
+            <div class="menu-container">
+                <div class="menu" id="menu-toggle">
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="dropdown" id="dropdown-menu">
+                    <a href="https://www.facebook.com/profile.php?id=61577362712458" target="_blank">Facebook page</a>
+                    <a href="https://ravejairusbriones-afk.github.io/Personal_Gallery/" target="_blank">Personal Gallery</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <div class="content">
+                <h1>First<br>Portfolio<br>Online</h1>
+                <div class="line"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+
+        menuToggle.addEventListener('click', (event) => {
+            event.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+        });
+
+        window.addEventListener('click', () => dropdownMenu.classList.remove('active'));
+    </script>
+</body>
+</html>
