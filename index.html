@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BRIONES Portfolio</title>
+    <title>BRIONES — Ethereal Portfolio</title>
     
+    <!-- Google Fonts: elegant serif + refined sans -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* Force zero margins and lock overflow to prevent scrolling */
+        /* RESET — strict no-scroll, fullscreen canvas */
         * {
             margin: 0;
             padding: 0;
@@ -18,7 +19,7 @@
         body {
             width: 100vw;
             height: 100vh;
-            overflow: hidden; 
+            overflow: hidden;
             font-family: 'Inter', sans-serif;
             background: #000;
         }
@@ -28,14 +29,32 @@
             width: 100vw;
             height: 100vh;
             background: url("your-photo.jpg") center center / cover no-repeat;
+            background-color: #0a0c10;
         }
 
+        /* soft dark overlay to help mist blend naturally */
         .hero::after {
             content: "";
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.15);
+            background: radial-gradient(circle at 40% 30%, rgba(0,0,0,0.35), rgba(0,0,0,0.6));
             z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ===== SMOKE MIST CANVAS — very low opacity, cool greyish tint ===== */
+        #smoke-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.45;            /* master canvas opacity lowered (was 0.65) */
+            mix-blend-mode: screen;
+            will-change: transform;
         }
 
         header {
@@ -43,7 +62,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 3;
+            z-index: 4;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -56,6 +75,8 @@
             letter-spacing: 10px;
             font-weight: 300;
             text-transform: uppercase;
+            text-shadow: 0 0 12px rgba(0,0,0,0.4);
+            backdrop-filter: blur(2px);
         }
 
         .menu-container {
@@ -72,41 +93,61 @@
             height: 2px;
             background: white;
             margin: 10px 0;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 4px rgba(0,0,0,0.3);
         }
 
         .dropdown {
-            display: none; 
+            display: none;
             position: absolute;
-            top: 40px; 
+            top: 48px;
             right: 0;
-            background: transparent;
+            background: rgba(10, 12, 18, 0.55);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 18px 28px;
             text-align: right;
-            z-index: 10;
+            z-index: 20;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.4);
         }
 
         @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.8) translateY(-10px); }
+            0% { opacity: 0; transform: scale(0.92) translateY(-8px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         .dropdown.active {
             display: block;
-            animation: popIn 0.3s ease-out forwards;
+            animation: popIn 0.28s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
         }
 
         .dropdown a {
             display: block;
-            color: white;
+            color: rgba(255,255,245,0.95);
             text-decoration: none;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            margin-bottom: 14px;
+            transition: all 0.2s;
+            text-shadow: 0 1px 2px black;
+        }
+
+        .dropdown a:last-child {
+            margin-bottom: 0;
+        }
+
+        .dropdown a:hover {
+            color: white;
+            letter-spacing: 1px;
+            transform: translateX(-5px);
         }
 
         .content-wrapper {
             position: absolute;
-            z-index: 2;
-            top: 60%; /* Adjusted from 50% to 60% to move content down and avoid overlap */
+            z-index: 3;
+            top: 62%;
             left: 80px;
             transform: translateY(-50%);
             color: white;
@@ -115,28 +156,40 @@
         .content h1 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 9rem;
-            line-height: 0.9;
+            line-height: 0.92;
             font-weight: 500;
+            text-shadow: 0 8px 22px rgba(0,0,0,0.35);
+            letter-spacing: -0.02em;
         }
 
         .line {
-            width: 60px;
+            width: 70px;
             height: 2px;
-            background: white;
+            background: rgba(255,255,240,0.9);
             margin-top: 45px;
+            box-shadow: 0 0 10px rgba(255,245,210,0.6);
         }
 
         @media(max-width: 900px) {
-            header { padding: 30px; }
-            .logo { font-size: 1.5rem; }
-            .content-wrapper { left: 35px; }
-            .content h1 { font-size: 4.5rem; }
+            header { padding: 28px 32px; }
+            .logo { font-size: 1.5rem; letter-spacing: 6px; }
+            .content-wrapper { left: 30px; top: 64%; }
+            .content h1 { font-size: 4.2rem; }
+            .line { width: 48px; margin-top: 28px; }
+            .dropdown a { font-size: 0.9rem; }
+        }
+
+        @media(max-width: 550px) {
+            .content h1 { font-size: 3rem; }
+            .content-wrapper { left: 24px; top: 66%; }
         }
     </style>
 </head>
 <body>
 
     <section class="hero">
+        <canvas id="smoke-canvas"></canvas>
+
         <header>
             <div class="logo">BRIONES</div>
             <div class="menu-container">
@@ -161,15 +214,217 @@
     </section>
 
     <script>
+        (function() {
+            // ==========  EXTREMELY SUBDUED MIST — LOWEST OPACITY, COOL TONES ==========
+            // No overwhelming whites: shifted to muted grayish-blue with very low alpha
+            
+            const canvas = document.getElementById('smoke-canvas');
+            let ctx = canvas.getContext('2d');
+            
+            let particles = [];
+            let animationFrameId = null;
+            let canvasWidth = 0, canvasHeight = 0;
+            
+            // drastically lowered opacity, muted colors
+            const PARTICLE_COUNT = 38;
+            const BLUR_STRENGTH = 46;
+            const BASE_OPACITY = 0.065;      // extremely low (was 0.14)
+            
+            class SmokeParticle {
+                constructor(xRel, yRel, radiusRel, speedX, speedY, angleDrift, driftSpeed, colorTone) {
+                    this.xRel = xRel;
+                    this.yRel = yRel;
+                    this.radiusRel = radiusRel;
+                    this.speedX = speedX;
+                    this.speedY = speedY;
+                    this.angleDrift = angleDrift;
+                    this.driftSpeed = driftSpeed;
+                    this.colorTone = colorTone; // now only 'cool_mist' and 'grey_lavender' – no white
+                    this.lifePhase = Math.random() * Math.PI * 2;
+                    this.pulseSpeed = 0.007 + Math.random() * 0.012;
+                }
+                
+                update() {
+                    this.angleDrift += this.driftSpeed;
+                    let driftX = Math.cos(this.angleDrift) * 0.0012;
+                    let driftY = Math.sin(this.angleDrift * 0.7) * 0.0010;
+                    
+                    this.xRel += this.speedX + driftX;
+                    this.yRel += this.speedY + driftY;
+                    
+                    if (this.xRel > 1.2) this.xRel = -0.2;
+                    if (this.xRel < -0.2) this.xRel = 1.2;
+                    if (this.yRel > 1.2) this.yRel = -0.2;
+                    if (this.yRel < -0.2) this.yRel = 1.2;
+                    
+                    this.lifePhase += this.pulseSpeed;
+                }
+                
+                getRadius(baseDim) {
+                    let radius = this.radiusRel * baseDim;
+                    let pulse = 0.87 + Math.sin(this.lifePhase) * 0.1;
+                    return Math.max(12, radius * pulse);
+                }
+            }
+            
+            function randomRange(min, max) {
+                return min + Math.random() * (max - min);
+            }
+            
+            function initSmokeParticles(width, height) {
+                const newParticles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    const xRel = Math.random();
+                    const yRel = Math.random();
+                    const radiusRel = randomRange(0.09, 0.26);
+                    const speedX = randomRange(-0.0016, 0.0016);
+                    const speedY = randomRange(-0.0016, 0.0016);
+                    const angleDrift = Math.random() * Math.PI * 2;
+                    const driftSpeed = randomRange(0.003, 0.011);
+                    
+                    // only subdued cool tones – no bright whites
+                    let colorTone = Math.random() < 0.6 ? 'cool_mist' : 'grey_lavender';
+                    
+                    newParticles.push(new SmokeParticle(xRel, yRel, radiusRel, speedX, speedY, angleDrift, driftSpeed, colorTone));
+                }
+                return newParticles;
+            }
+            
+            function resizeCanvasAndAdapt() {
+                if (!canvas || !ctx) return;
+                const newWidth = window.innerWidth;
+                const newHeight = window.innerHeight;
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                canvasWidth = newWidth;
+                canvasHeight = newHeight;
+                canvas.style.width = `${newWidth}px`;
+                canvas.style.height = `${newHeight}px`;
+                
+                if (particles.length > 0) {
+                    for (let p of particles) {
+                        if (p.xRel < -0.3) p.xRel = -0.2;
+                        if (p.xRel > 1.3) p.xRel = 1.2;
+                        if (p.yRel < -0.3) p.yRel = -0.2;
+                        if (p.yRel > 1.3) p.yRel = 1.2;
+                    }
+                } else {
+                    particles = initSmokeParticles(newWidth, newHeight);
+                }
+            }
+            
+            function drawSmoke() {
+                if (!ctx || canvasWidth === 0 || canvasHeight === 0) return;
+                
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                ctx.filter = `blur(${BLUR_STRENGTH}px)`;
+                
+                const minDim = Math.min(canvasWidth, canvasHeight);
+                
+                for (let p of particles) {
+                    const x = p.xRel * canvasWidth;
+                    const y = p.yRel * canvasHeight;
+                    const radius = p.getRadius(minDim);
+                    if (radius < 5) continue;
+                    
+                    // extremely low alpha, muted RGB values – no white dominance
+                    let baseR, baseG, baseB;
+                    const opacityVar = BASE_OPACITY + (Math.sin(p.lifePhase * 1.4) * 0.02);
+                    let alpha = Math.min(0.13, Math.max(0.04, opacityVar));
+                    
+                    if (p.colorTone === 'cool_mist') {
+                        // very faint steel blue
+                        baseR = 140; baseG = 155; baseB = 180;
+                    } else {
+                        // muted grey with a whisper of lavender
+                        baseR = 125; baseG = 120; baseB = 140;
+                    }
+                    
+                    const gradient = ctx.createRadialGradient(x, y, radius * 0.2, x, y, radius);
+                    gradient.addColorStop(0, `rgba(${baseR}, ${baseG}, ${baseB}, ${alpha * 0.8})`);
+                    gradient.addColorStop(0.5, `rgba(${baseR - 10}, ${baseG - 8}, ${baseB - 12}, ${alpha * 0.4})`);
+                    gradient.addColorStop(0.8, `rgba(${baseR - 20}, ${baseG - 18}, ${baseB - 25}, ${alpha * 0.15})`);
+                    gradient.addColorStop(1, `rgba(${baseR - 35}, ${baseG - 32}, ${baseB - 40}, 0)`);
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                }
+                
+                // second extra-light veil – even more transparent, same muted palette
+                ctx.filter = `blur(${BLUR_STRENGTH * 1.2}px)`;
+                for (let p of particles.slice(0, 26)) {
+                    const timeOffset = Date.now() * 0.0006;
+                    const x = p.xRel * canvasWidth + (Math.sin(timeOffset + p.angleDrift) * 8);
+                    const y = p.yRel * canvasHeight + (Math.cos(timeOffset * 0.85 + p.lifePhase) * 7);
+                    const radius = p.getRadius(minDim) * 1.22;
+                    if (radius < 10) continue;
+                    const softAlpha = 0.045;
+                    let tintR, tintG, tintB;
+                    if (p.colorTone === 'cool_mist') {
+                        tintR = 130; tintG = 145; tintB = 170;
+                    } else {
+                        tintR = 115; tintG = 110; tintB = 130;
+                    }
+                    const grad = ctx.createRadialGradient(x, y, radius * 0.2, x, y, radius);
+                    grad.addColorStop(0, `rgba(${tintR}, ${tintG}, ${tintB}, ${softAlpha * 0.7})`);
+                    grad.addColorStop(0.6, `rgba(${tintR - 12}, ${tintG - 10}, ${tintB - 15}, ${softAlpha * 0.3})`);
+                    grad.addColorStop(1, `rgba(${tintR - 25}, ${tintG - 22}, ${tintB - 30}, 0)`);
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = grad;
+                    ctx.fill();
+                }
+            }
+            
+            function animateSmoke() {
+                if (!canvas || !ctx) return;
+                for (let p of particles) p.update();
+                drawSmoke();
+                animationFrameId = requestAnimationFrame(animateSmoke);
+            }
+            
+            function handleResize() {
+                resizeCanvasAndAdapt();
+                if (ctx) drawSmoke();
+            }
+            
+            function initSmokeSystem() {
+                if (!canvas) return;
+                ctx = canvas.getContext('2d');
+                if (!ctx) return;
+                resizeCanvasAndAdapt();
+                if (!particles.length) {
+                    particles = initSmokeParticles(canvasWidth, canvasHeight);
+                }
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                animationFrameId = requestAnimationFrame(animateSmoke);
+                window.addEventListener('resize', handleResize);
+                window.addEventListener('orientationchange', () => setTimeout(handleResize, 30));
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initSmokeSystem);
+            } else {
+                initSmokeSystem();
+            }
+        })();
+        
+        // menu toggle (unchanged)
         const menuToggle = document.getElementById('menu-toggle');
         const dropdownMenu = document.getElementById('dropdown-menu');
-
-        menuToggle.addEventListener('click', (event) => {
-            event.stopPropagation();
-            dropdownMenu.classList.toggle('active');
-        });
-
-        window.addEventListener('click', () => dropdownMenu.classList.remove('active'));
+        
+        if (menuToggle && dropdownMenu) {
+            menuToggle.addEventListener('click', (event) => {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('active');
+            });
+            window.addEventListener('click', () => {
+                dropdownMenu.classList.remove('active');
+            });
+            dropdownMenu.addEventListener('click', (e) => e.stopPropagation());
+        }
     </script>
 </body>
 </html>
