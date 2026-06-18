@@ -50,11 +50,14 @@
             inset: 0;
             width: 100%;
             height: 100%;
-            z-index: 2; /* Background layer, above photo, below text */
+            z-index: 2;
             pointer-events: none;
-            mix-blend-mode: screen; /* Creates an ethereal glow over the image */
+            mix-blend-mode: screen;
             opacity: 0.6;
-            will-change: transform;
+            /* 🔧 Performance fix: GPU-accelerated blur instead of canvas filter */
+            filter: blur(70px);
+            will-change: transform, filter;
+            transform: translateZ(0); /* force own compositor layer */
         }
 
         /* ===== HEADER ===== */
@@ -78,7 +81,6 @@
         .nav-wrapper { display: flex; align-items: center; gap: clamp(15px, 3vw, 50px); }
         .nav-links { display: flex; gap: clamp(20px, 3vw, 45px); list-style: none; }
         
-        /* Bigger "Home" link */
         .nav-link {
             color: rgba(255, 255, 255, 0.5);
             text-decoration: none;
@@ -89,7 +91,6 @@
         }
         .nav-link:hover, .nav-link.active { color: #fff; }
         
-        /* Bigger dot under Home */
         .nav-link.active::after {
             content: '';
             position: absolute;
@@ -100,7 +101,6 @@
             border-radius: 50%; background: #fff;
         }
 
-        /* Bigger Hamburger Menu */
         .menu-container {
             position: relative; 
             width: clamp(52px, 7vw, 64px); height: clamp(52px, 7vw, 64px);
@@ -111,7 +111,6 @@
         }
         .menu-container:hover { border-color: #fff; transform: scale(1.03); }
         
-        /* Bigger inner hamburger lines */
         .menu { display: flex; flex-direction: column; gap: 6px; }
         .menu span { display: block; height: 2px; background: #fff; transition: 0.2s; }
         .menu span:nth-child(1) { width: 22px; }
@@ -180,7 +179,6 @@
         }
         .btn-view-work:hover .arrow-circle { transform: translateX(6px); border-color: #fff; background: rgba(255, 255, 255, 0.1); }
 
-        /* Bigger Social Icons */
         .social-sidebar {
             position: absolute;
             right: clamp(15px, 3vw, 50px);
@@ -203,7 +201,6 @@
 </head>
 <body>
     <section class="hero">
-        <!-- Ethereal Fog Canvas injected here -->
         <canvas id="fog-canvas"></canvas>
 
         <header>
@@ -263,7 +260,7 @@
             dropdownMenu.addEventListener('click', (e) => e.stopPropagation());
         }
 
-        // ===== OPTIMIZED FLUID FOG WITH ENHANCED ETHEREAL PHYSICS (lowered opacity) =====
+        // ===== OPTIMIZED FLUID FOG – GPU blur via CSS, no canvas filter =====
         (function() {
             const canvas = document.getElementById('fog-canvas');
             if (!canvas) return;
@@ -272,13 +269,10 @@
             let width, height;
             let particles = [];
             let animationFrameId;
-            let time = 0; // For physics-based wind currents
+            let time = 0;
 
-            // --- ADJUSTED SETTINGS ---
-            const PARTICLE_COUNT = 50;          // Slightly more particles for density
-            const BLUR_AMOUNT = 70;             // Softer, more ethereal blending
-            const MAX_OPACITY = 0.03;           // Lowered from 0.05 for a more subtle ethereal presence
-            // -------------------------
+            const PARTICLE_COUNT = 50;
+            const MAX_OPACITY = 0.03;
 
             class FogParticle {
                 constructor() {
@@ -287,7 +281,6 @@
                 reset(init = false) {
                     this.x = Math.random() * width;
                     this.y = Math.random() * height;
-                    // Base drift with organic noise later
                     this.vx = (Math.random() - 0.5) * 0.7;
                     this.vy = (Math.random() - 0.5) * 0.35;
                     this.radius = 200 + Math.random() * 350;
@@ -296,18 +289,15 @@
                     this.life = init ? 1 : Math.random();
                 }
                 update() {
-                    // Physics: dynamic wind field using coherent noise (sine/cosine combination)
-                    // Creates swirling, ever-changing currents that make the fog ethereal
                     const windScale = 0.0008;
                     const windStrength = 0.03;
                     const angle = Math.sin(this.x * windScale + time * 0.0002) * 
                                   Math.cos(this.y * windScale * 1.3 + time * 0.0003) * 
-                                  Math.sin(time * 0.0001) * 6.28; // full circle mapping
+                                  Math.sin(time * 0.0001) * 6.28;
                     
                     this.vx += Math.cos(angle) * windStrength;
                     this.vy += Math.sin(angle) * windStrength;
                     
-                    // Slight damping to keep speeds in check
                     this.vx *= 0.995;
                     this.vy *= 0.995;
                     
@@ -315,7 +305,6 @@
                     this.y += this.vy;
                     this.phase += this.pulseSpeed;
                     
-                    // Edge wrapping (seamless loop)
                     if (this.x < -this.radius) this.x = width + this.radius;
                     if (this.x > width + this.radius) this.x = -this.radius;
                     if (this.y < -this.radius) this.y = height + this.radius;
@@ -323,7 +312,7 @@
                 }
                 draw() {
                     const currentRadius = this.radius * (1 + Math.sin(this.phase) * 0.15);
-                    const r = 185, g = 205, b = 235; // Slightly brighter, more ethereal tone
+                    const r = 185, g = 205, b = 235;
                     const alpha = MAX_OPACITY * (0.7 + Math.sin(this.phase * 0.8) * 0.3);
                     
                     const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, currentRadius);
@@ -356,10 +345,9 @@
             function animateFog() {
                 if (!ctx) return;
                 ctx.clearRect(0, 0, width, height);
-                
-                ctx.filter = `blur(${BLUR_AMOUNT}px)`;
 
-                time += 0.5; // Advance time for wind dynamics
+                // 🚫 No more canvas filter – now handled by CSS `filter: blur(70px)`
+                time += 0.5;
 
                 for (let p of particles) {
                     p.update();
