@@ -3,422 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BRIONES — Ethereal Portfolio</title>
+    <title>BRIONES — Elegant Portfolio</title>
     
-    <!-- Google Fonts: elegant serif + refined sans -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* RESET — strict no-scroll, fullscreen canvas */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* ===== RESET & 100dvh ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            font-family: 'Inter', sans-serif;
+            width: 100dvw;
+            height: 100dvh; 
+            overflow: hidden; 
             background: #000;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* ===== BACKGROUND ===== */
         .hero {
             position: relative;
-            width: 100vw;
-            height: 100vh;
-            background: url("your-photo.jpg") center center / cover no-repeat;
-            background-color: #0a0c10;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.96) 15%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 70%), 
+                        url('your-photo.jpg');
+            background-size: cover;
+            background-position: center 10%;
+            background-repeat: no-repeat;
+            background-color: #000;
         }
 
-        /* soft dark overlay to help mist blend naturally */
-        .hero::after {
-            content: "";
+        /* Background overlay for text readability */
+        .hero::before {
+            content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 40% 30%, rgba(0,0,0,0.35), rgba(0,0,0,0.6));
+            background: linear-gradient(to right, #000 20%, rgba(0,0,0,0) 60%);
             z-index: 1;
             pointer-events: none;
         }
 
-        /* ===== SMOKE MIST CANVAS — very low opacity, cool greyish tint ===== */
-        #smoke-canvas {
+        /* ===== FOG CANVAS ===== */
+        #fog-canvas {
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
-            display: block;
+            z-index: 2; /* Background layer, above photo, below text */
             pointer-events: none;
-            z-index: 2;
-            opacity: 0.45;            /* master canvas opacity lowered (was 0.65) */
-            mix-blend-mode: screen;
+            mix-blend-mode: screen; /* Creates an ethereal glow over the image */
+            opacity: 0.6;
             will-change: transform;
         }
 
+        /* ===== HEADER ===== */
         header {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 4;
+            height: 90px; 
+            padding: 0 clamp(15px, 4vw, 70px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 55px 70px;
+            z-index: 10;
         }
 
-        .logo {
-            color: white;
-            font-size: 2.3rem;
-            letter-spacing: 10px;
-            font-weight: 300;
-            text-transform: uppercase;
-            text-shadow: 0 0 12px rgba(0,0,0,0.4);
-            backdrop-filter: blur(2px);
-        }
+        .logo { display: flex; align-items: baseline; gap: 12px; }
+        .logo-b { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 3vw, 3.2rem); font-weight: 500; }
+        .logo-name { font-size: clamp(0.5rem, 0.8vw, 0.75rem); letter-spacing: 0.45em; text-transform: uppercase; opacity: 0.9; }
 
-        .menu-container {
+        .nav-wrapper { display: flex; align-items: center; gap: clamp(15px, 3vw, 50px); }
+        .nav-links { display: flex; gap: clamp(20px, 3vw, 45px); list-style: none; }
+        
+        /* Bigger "Home" link */
+        .nav-link {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: clamp(1rem, 1.5vw, 1.4rem);
+            letter-spacing: 0.05em;
+            transition: 0.3s ease;
             position: relative;
         }
-
-        .menu {
-            width: 45px;
-            cursor: pointer;
+        .nav-link:hover, .nav-link.active { color: #fff; }
+        
+        /* Bigger dot under Home */
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px; height: 6px;
+            border-radius: 50%; background: #fff;
         }
 
-        .menu span {
-            display: block;
-            height: 2px;
-            background: white;
-            margin: 10px 0;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 4px rgba(0,0,0,0.3);
+        /* Bigger Hamburger Menu */
+        .menu-container {
+            position: relative; 
+            width: clamp(52px, 7vw, 64px); height: clamp(52px, 7vw, 64px);
+            border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.3s ease;
+            pointer-events: auto; 
         }
+        .menu-container:hover { border-color: #fff; transform: scale(1.03); }
+        
+        /* Bigger inner hamburger lines */
+        .menu { display: flex; flex-direction: column; gap: 6px; }
+        .menu span { display: block; height: 2px; background: #fff; transition: 0.2s; }
+        .menu span:nth-child(1) { width: 22px; }
+        .menu span:nth-child(2) { width: 16px; }
+        .menu span:nth-child(3) { width: 12px; }
 
         .dropdown {
-            display: none;
+            display: none; position: absolute; top: 65px; right: 0;
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(12px);
+            border-radius: 16px; padding: 24px 32px; z-index: 20;
+            border: 1px solid rgba(255, 255, 255, 0.1); min-width: 180px;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.8);
+        }
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.95) translateY(-10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .dropdown.active { display: block; animation: popIn 0.35s ease forwards; }
+        .dropdown a { display: block; color: rgba(255, 255, 255, 0.8); text-decoration: none; font-size: 0.95rem; margin-bottom: 18px; transition: 0.2s; }
+        .dropdown a:last-child { margin-bottom: 0; }
+        .dropdown a:hover { color: #fff; transform: translateX(-4px); }
+
+        /* ===== MAIN CONTENT ===== */
+        .content-container {
             position: absolute;
-            top: 48px;
-            right: 0;
-            background: rgba(10, 12, 18, 0.55);
-            backdrop-filter: blur(12px);
-            border-radius: 12px;
-            padding: 18px 28px;
-            text-align: right;
-            z-index: 20;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.4);
+            top: 0; left: clamp(20px, 4vw, 70px);
+            height: 100dvh;
+            padding-top: 90px;
+            padding-bottom: clamp(50px, 8vh, 90px);
+            width: clamp(300px, 50vw, 650px);
+            max-width: 90%;
+            display: flex; flex-direction: column; justify-content: center;
+            pointer-events: none; z-index: 5;
         }
-
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.92) translateY(-8px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .dropdown.active {
-            display: block;
-            animation: popIn 0.28s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-        }
-
-        .dropdown a {
-            display: block;
-            color: rgba(255,255,245,0.95);
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 400;
-            letter-spacing: 0.3px;
-            margin-bottom: 14px;
-            transition: all 0.2s;
-            text-shadow: 0 1px 2px black;
-        }
-
-        .dropdown a:last-child {
-            margin-bottom: 0;
-        }
-
-        .dropdown a:hover {
-            color: white;
-            letter-spacing: 1px;
-            transform: translateX(-5px);
-        }
-
-        .content-wrapper {
-            position: absolute;
-            z-index: 3;
-            top: 62%;
-            left: 80px;
-            transform: translateY(-50%);
-            color: white;
-        }
-
-        .content h1 {
+        .content-container h1 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 9rem;
-            line-height: 0.92;
-            font-weight: 500;
-            text-shadow: 0 8px 22px rgba(0,0,0,0.35);
-            letter-spacing: -0.02em;
+            font-size: clamp(3.2rem, 10vw, 8rem);
+            line-height: 0.88; font-weight: 500; letter-spacing: -0.03em;
+            text-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+            pointer-events: auto;
+        }
+        .grey-text { color: #888888; }
+        .subtext {
+            margin-top: clamp(15px, 3vh, 35px);
+            font-size: clamp(0.9rem, 1.5vw, 1.15rem);
+            font-weight: 300; line-height: 1.6; color: #d5d5d5;
+            pointer-events: auto;
         }
 
-        .line {
-            width: 70px;
-            height: 2px;
-            background: rgba(255,255,240,0.9);
-            margin-top: 45px;
-            box-shadow: 0 0 10px rgba(255,245,210,0.6);
+        /* ===== VIEW WORK BUTTON ===== */
+        .btn-view-work {
+            display: inline-flex; align-items: center;
+            margin-top: clamp(20px, 4vh, 45px);
+            padding: clamp(10px, 1.2vh, 14px) clamp(20px, 3vw, 32px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50px;
+            text-decoration: none; color: #fff;
+            font-size: clamp(0.65rem, 1vw, 0.8rem);
+            letter-spacing: 0.1em; text-transform: uppercase;
+            background: transparent; transition: 0.4s ease;
+            pointer-events: auto;
         }
+        .btn-view-work:hover { border-color: #fff; background: rgba(255, 255, 255, 0.05); }
+        .arrow-circle {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: clamp(24px, 3vw, 32px); height: clamp(24px, 3vw, 32px);
+            border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-left: clamp(8px, 1.5vw, 15px);
+            font-size: clamp(0.7rem, 1vw, 0.9rem); transition: 0.4s ease;
+        }
+        .btn-view-work:hover .arrow-circle { transform: translateX(6px); border-color: #fff; background: rgba(255, 255, 255, 0.1); }
 
-        @media(max-width: 900px) {
-            header { padding: 28px 32px; }
-            .logo { font-size: 1.5rem; letter-spacing: 6px; }
-            .content-wrapper { left: 30px; top: 64%; }
-            .content h1 { font-size: 4.2rem; }
-            .line { width: 48px; margin-top: 28px; }
-            .dropdown a { font-size: 0.9rem; }
+        /* Bigger Social Icons */
+        .social-sidebar {
+            position: absolute;
+            right: clamp(15px, 3vw, 50px);
+            bottom: clamp(15px, 3vh, 50px); 
+            z-index: 5; display: flex; flex-direction: column; gap: clamp(16px, 2.5vh, 24px);
+            pointer-events: none;
         }
+        .social-btn {
+            width: clamp(46px, 6vw, 58px); height: clamp(46px, 6vw, 58px);
+            border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; justify-content: center; align-items: center;
+            color: #fff; text-decoration: none;
+            font-size: clamp(1.2rem, 1.5vw, 1.6rem);
+            transition: 0.3s ease; pointer-events: auto;
+        }
+        .social-btn:hover { border-color: #fff; background: rgba(255, 255, 255, 0.05); transform: scale(1.08); }
 
-        @media(max-width: 550px) {
-            .content h1 { font-size: 3rem; }
-            .content-wrapper { left: 24px; top: 66%; }
-        }
+        @media (max-width: 768px) { .nav-links { display: none; } }
     </style>
 </head>
 <body>
-
     <section class="hero">
-        <canvas id="smoke-canvas"></canvas>
+        <!-- Ethereal Fog Canvas injected here -->
+        <canvas id="fog-canvas"></canvas>
 
         <header>
-            <div class="logo">BRIONES</div>
-            <div class="menu-container">
-                <div class="menu" id="menu-toggle">
-                    <span></span>
-                    <span></span>
-                </div>
-                <div class="dropdown" id="dropdown-menu">
-                    <a href="https://www.facebook.com/profile.php?id=61577362712458" target="_blank">Facebook page</a>
-                    <a href="https://ravejairusbriones-afk.github.io/Personal_Gallery/" target="_blank">Personal Gallery</a>
-                    <a href="https://ravejairusbriones-afk.github.io/Personal_Library/" target="_blank">Personal Library</a>
-                    <a href="https://ravejairusbriones-afk.github.io/Mock-Examaniation/" target="_blank">Mock Examination</a>
+            <div class="logo">
+                <span class="logo-b">B.</span>
+                <span class="logo-name">BRIONES</span>
+            </div>
+            
+            <div class="nav-wrapper">
+                <nav class="nav-links">
+                    <a href="#" class="nav-link active">Home</a>
+                </nav>
+
+                <div class="menu-container" id="menu-container">
+                    <div class="menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="dropdown" id="dropdown-menu">
+                        <a href="https://www.facebook.com/profile.php?id=61577362712458" target="_blank">Facebook page</a>
+                        <a href="https://ravejairusbriones-afk.github.io/Personal_Gallery/" target="_blank">Personal Gallery</a>
+                        <a href="https://ravejairusbriones-afk.github.io/Personal_Library/" target="_blank">Personal Library</a>
+                        <a href="https://ravejairusbriones-afk.github.io/Mock-Examaniation/" target="_blank">Mock Examination</a>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <div class="content-wrapper">
-            <div class="content">
-                <h1>First<br>Portfolio<br>Online</h1>
-                <div class="line"></div>
-            </div>
+        <div class="content-container">
+            <h1>First<br>Portfolio<br><span class="grey-text">Online</span></h1>
+            <p class="subtext">Welcome to my digital space.<br>Explore my work and creative journey.</p>
+            <a href="#" class="btn-view-work">
+                View Work <span class="arrow-circle">&#8594;</span>
+            </a>
+        </div>
+
+        <div class="social-sidebar">
+            <a href="https://github.com/ravejairusbriones-afk" target="_blank" class="social-btn"><i class="fa-brands fa-github"></i></a>
+            <a href="mailto:ravejairusbriones@gmail.com" class="social-btn"><i class="fa-regular fa-envelope"></i></a>
         </div>
     </section>
 
     <script>
-        (function() {
-            // ==========  EXTREMELY SUBDUED MIST — LOWEST OPACITY, COOL TONES ==========
-            // No overwhelming whites: shifted to muted grayish-blue with very low alpha
-            
-            const canvas = document.getElementById('smoke-canvas');
-            let ctx = canvas.getContext('2d');
-            
-            let particles = [];
-            let animationFrameId = null;
-            let canvasWidth = 0, canvasHeight = 0;
-            
-            // drastically lowered opacity, muted colors
-            const PARTICLE_COUNT = 38;
-            const BLUR_STRENGTH = 46;
-            const BASE_OPACITY = 0.065;      // extremely low (was 0.14)
-            
-            class SmokeParticle {
-                constructor(xRel, yRel, radiusRel, speedX, speedY, angleDrift, driftSpeed, colorTone) {
-                    this.xRel = xRel;
-                    this.yRel = yRel;
-                    this.radiusRel = radiusRel;
-                    this.speedX = speedX;
-                    this.speedY = speedY;
-                    this.angleDrift = angleDrift;
-                    this.driftSpeed = driftSpeed;
-                    this.colorTone = colorTone; // now only 'cool_mist' and 'grey_lavender' – no white
-                    this.lifePhase = Math.random() * Math.PI * 2;
-                    this.pulseSpeed = 0.007 + Math.random() * 0.012;
-                }
-                
-                update() {
-                    this.angleDrift += this.driftSpeed;
-                    let driftX = Math.cos(this.angleDrift) * 0.0012;
-                    let driftY = Math.sin(this.angleDrift * 0.7) * 0.0010;
-                    
-                    this.xRel += this.speedX + driftX;
-                    this.yRel += this.speedY + driftY;
-                    
-                    if (this.xRel > 1.2) this.xRel = -0.2;
-                    if (this.xRel < -0.2) this.xRel = 1.2;
-                    if (this.yRel > 1.2) this.yRel = -0.2;
-                    if (this.yRel < -0.2) this.yRel = 1.2;
-                    
-                    this.lifePhase += this.pulseSpeed;
-                }
-                
-                getRadius(baseDim) {
-                    let radius = this.radiusRel * baseDim;
-                    let pulse = 0.87 + Math.sin(this.lifePhase) * 0.1;
-                    return Math.max(12, radius * pulse);
-                }
-            }
-            
-            function randomRange(min, max) {
-                return min + Math.random() * (max - min);
-            }
-            
-            function initSmokeParticles(width, height) {
-                const newParticles = [];
-                for (let i = 0; i < PARTICLE_COUNT; i++) {
-                    const xRel = Math.random();
-                    const yRel = Math.random();
-                    const radiusRel = randomRange(0.09, 0.26);
-                    const speedX = randomRange(-0.0016, 0.0016);
-                    const speedY = randomRange(-0.0016, 0.0016);
-                    const angleDrift = Math.random() * Math.PI * 2;
-                    const driftSpeed = randomRange(0.003, 0.011);
-                    
-                    // only subdued cool tones – no bright whites
-                    let colorTone = Math.random() < 0.6 ? 'cool_mist' : 'grey_lavender';
-                    
-                    newParticles.push(new SmokeParticle(xRel, yRel, radiusRel, speedX, speedY, angleDrift, driftSpeed, colorTone));
-                }
-                return newParticles;
-            }
-            
-            function resizeCanvasAndAdapt() {
-                if (!canvas || !ctx) return;
-                const newWidth = window.innerWidth;
-                const newHeight = window.innerHeight;
-                canvas.width = newWidth;
-                canvas.height = newHeight;
-                canvasWidth = newWidth;
-                canvasHeight = newHeight;
-                canvas.style.width = `${newWidth}px`;
-                canvas.style.height = `${newHeight}px`;
-                
-                if (particles.length > 0) {
-                    for (let p of particles) {
-                        if (p.xRel < -0.3) p.xRel = -0.2;
-                        if (p.xRel > 1.3) p.xRel = 1.2;
-                        if (p.yRel < -0.3) p.yRel = -0.2;
-                        if (p.yRel > 1.3) p.yRel = 1.2;
-                    }
-                } else {
-                    particles = initSmokeParticles(newWidth, newHeight);
-                }
-            }
-            
-            function drawSmoke() {
-                if (!ctx || canvasWidth === 0 || canvasHeight === 0) return;
-                
-                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-                ctx.filter = `blur(${BLUR_STRENGTH}px)`;
-                
-                const minDim = Math.min(canvasWidth, canvasHeight);
-                
-                for (let p of particles) {
-                    const x = p.xRel * canvasWidth;
-                    const y = p.yRel * canvasHeight;
-                    const radius = p.getRadius(minDim);
-                    if (radius < 5) continue;
-                    
-                    // extremely low alpha, muted RGB values – no white dominance
-                    let baseR, baseG, baseB;
-                    const opacityVar = BASE_OPACITY + (Math.sin(p.lifePhase * 1.4) * 0.02);
-                    let alpha = Math.min(0.13, Math.max(0.04, opacityVar));
-                    
-                    if (p.colorTone === 'cool_mist') {
-                        // very faint steel blue
-                        baseR = 140; baseG = 155; baseB = 180;
-                    } else {
-                        // muted grey with a whisper of lavender
-                        baseR = 125; baseG = 120; baseB = 140;
-                    }
-                    
-                    const gradient = ctx.createRadialGradient(x, y, radius * 0.2, x, y, radius);
-                    gradient.addColorStop(0, `rgba(${baseR}, ${baseG}, ${baseB}, ${alpha * 0.8})`);
-                    gradient.addColorStop(0.5, `rgba(${baseR - 10}, ${baseG - 8}, ${baseB - 12}, ${alpha * 0.4})`);
-                    gradient.addColorStop(0.8, `rgba(${baseR - 20}, ${baseG - 18}, ${baseB - 25}, ${alpha * 0.15})`);
-                    gradient.addColorStop(1, `rgba(${baseR - 35}, ${baseG - 32}, ${baseB - 40}, 0)`);
-                    
-                    ctx.beginPath();
-                    ctx.arc(x, y, radius, 0, Math.PI * 2);
-                    ctx.fillStyle = gradient;
-                    ctx.fill();
-                }
-                
-                // second extra-light veil – even more transparent, same muted palette
-                ctx.filter = `blur(${BLUR_STRENGTH * 1.2}px)`;
-                for (let p of particles.slice(0, 26)) {
-                    const timeOffset = Date.now() * 0.0006;
-                    const x = p.xRel * canvasWidth + (Math.sin(timeOffset + p.angleDrift) * 8);
-                    const y = p.yRel * canvasHeight + (Math.cos(timeOffset * 0.85 + p.lifePhase) * 7);
-                    const radius = p.getRadius(minDim) * 1.22;
-                    if (radius < 10) continue;
-                    const softAlpha = 0.045;
-                    let tintR, tintG, tintB;
-                    if (p.colorTone === 'cool_mist') {
-                        tintR = 130; tintG = 145; tintB = 170;
-                    } else {
-                        tintR = 115; tintG = 110; tintB = 130;
-                    }
-                    const grad = ctx.createRadialGradient(x, y, radius * 0.2, x, y, radius);
-                    grad.addColorStop(0, `rgba(${tintR}, ${tintG}, ${tintB}, ${softAlpha * 0.7})`);
-                    grad.addColorStop(0.6, `rgba(${tintR - 12}, ${tintG - 10}, ${tintB - 15}, ${softAlpha * 0.3})`);
-                    grad.addColorStop(1, `rgba(${tintR - 25}, ${tintG - 22}, ${tintB - 30}, 0)`);
-                    ctx.beginPath();
-                    ctx.arc(x, y, radius, 0, Math.PI * 2);
-                    ctx.fillStyle = grad;
-                    ctx.fill();
-                }
-            }
-            
-            function animateSmoke() {
-                if (!canvas || !ctx) return;
-                for (let p of particles) p.update();
-                drawSmoke();
-                animationFrameId = requestAnimationFrame(animateSmoke);
-            }
-            
-            function handleResize() {
-                resizeCanvasAndAdapt();
-                if (ctx) drawSmoke();
-            }
-            
-            function initSmokeSystem() {
-                if (!canvas) return;
-                ctx = canvas.getContext('2d');
-                if (!ctx) return;
-                resizeCanvasAndAdapt();
-                if (!particles.length) {
-                    particles = initSmokeParticles(canvasWidth, canvasHeight);
-                }
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                animationFrameId = requestAnimationFrame(animateSmoke);
-                window.addEventListener('resize', handleResize);
-                window.addEventListener('orientationchange', () => setTimeout(handleResize, 30));
-            }
-            
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initSmokeSystem);
-            } else {
-                initSmokeSystem();
-            }
-        })();
-        
-        // menu toggle (unchanged)
-        const menuToggle = document.getElementById('menu-toggle');
+        // ===== MENU TOGGLE =====
+        const menuContainer = document.getElementById('menu-container');
         const dropdownMenu = document.getElementById('dropdown-menu');
         
-        if (menuToggle && dropdownMenu) {
-            menuToggle.addEventListener('click', (event) => {
-                event.stopPropagation();
+        if (menuContainer && dropdownMenu) {
+            menuContainer.addEventListener('click', (event) => {
+                event.stopPropagation(); 
                 dropdownMenu.classList.toggle('active');
             });
             window.addEventListener('click', () => {
@@ -426,6 +262,128 @@
             });
             dropdownMenu.addEventListener('click', (e) => e.stopPropagation());
         }
+
+        // ===== OPTIMIZED FLUID FOG WITH ENHANCED ETHEREAL PHYSICS (lowered opacity) =====
+        (function() {
+            const canvas = document.getElementById('fog-canvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            let animationFrameId;
+            let time = 0; // For physics-based wind currents
+
+            // --- ADJUSTED SETTINGS ---
+            const PARTICLE_COUNT = 50;          // Slightly more particles for density
+            const BLUR_AMOUNT = 70;             // Softer, more ethereal blending
+            const MAX_OPACITY = 0.03;           // Lowered from 0.05 for a more subtle ethereal presence
+            // -------------------------
+
+            class FogParticle {
+                constructor() {
+                    this.reset(true);
+                }
+                reset(init = false) {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    // Base drift with organic noise later
+                    this.vx = (Math.random() - 0.5) * 0.7;
+                    this.vy = (Math.random() - 0.5) * 0.35;
+                    this.radius = 200 + Math.random() * 350;
+                    this.phase = Math.random() * Math.PI * 2;
+                    this.pulseSpeed = 0.002 + Math.random() * 0.006;
+                    this.life = init ? 1 : Math.random();
+                }
+                update() {
+                    // Physics: dynamic wind field using coherent noise (sine/cosine combination)
+                    // Creates swirling, ever-changing currents that make the fog ethereal
+                    const windScale = 0.0008;
+                    const windStrength = 0.03;
+                    const angle = Math.sin(this.x * windScale + time * 0.0002) * 
+                                  Math.cos(this.y * windScale * 1.3 + time * 0.0003) * 
+                                  Math.sin(time * 0.0001) * 6.28; // full circle mapping
+                    
+                    this.vx += Math.cos(angle) * windStrength;
+                    this.vy += Math.sin(angle) * windStrength;
+                    
+                    // Slight damping to keep speeds in check
+                    this.vx *= 0.995;
+                    this.vy *= 0.995;
+                    
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.phase += this.pulseSpeed;
+                    
+                    // Edge wrapping (seamless loop)
+                    if (this.x < -this.radius) this.x = width + this.radius;
+                    if (this.x > width + this.radius) this.x = -this.radius;
+                    if (this.y < -this.radius) this.y = height + this.radius;
+                    if (this.y > height + this.radius) this.y = -this.radius;
+                }
+                draw() {
+                    const currentRadius = this.radius * (1 + Math.sin(this.phase) * 0.15);
+                    const r = 185, g = 205, b = 235; // Slightly brighter, more ethereal tone
+                    const alpha = MAX_OPACITY * (0.7 + Math.sin(this.phase * 0.8) * 0.3);
+                    
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, currentRadius);
+                    gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${alpha})`);
+                    gradient.addColorStop(0.4, `rgba(${r-15}, ${g-10}, ${b-10}, ${alpha * 0.6})`);
+                    gradient.addColorStop(1, `rgba(${r-30}, ${g-25}, ${b-30}, 0)`);
+                    
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, currentRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push(new FogParticle());
+                }
+            }
+
+            function resizeCanvas() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                initParticles();
+            }
+
+            function animateFog() {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, width, height);
+                
+                ctx.filter = `blur(${BLUR_AMOUNT}px)`;
+
+                time += 0.5; // Advance time for wind dynamics
+
+                for (let p of particles) {
+                    p.update();
+                    p.draw();
+                }
+                
+                animationFrameId = requestAnimationFrame(animateFog);
+            }
+
+            resizeCanvas();
+            animateFog();
+
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    resizeCanvas();
+                }, 200);
+            });
+
+            window.addEventListener('beforeunload', () => {
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            });
+        })();
     </script>
 </body>
 </html>
